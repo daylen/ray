@@ -41,7 +41,7 @@ def train_and_export(algo_name, num_steps, model_dir, ckpt_dir, prefix):
         "prioritized_replay_alpha": 0.5,
         "beta_annealing_fraction": 1.0,
         "final_prioritized_replay_beta": 1.0,
-        "num_gpus": 0.5,
+        "num_gpus": 1.0,
         "timesteps_per_iteration": 10000,
     }, env="BreakoutDeterministic-v4")
 
