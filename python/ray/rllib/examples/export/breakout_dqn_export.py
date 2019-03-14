@@ -40,7 +40,7 @@ def train_and_export(algo_name, num_steps, model_dir, ckpt_dir, prefix):
         "final_prioritized_replay_beta": 1.0,
         "num_gpus": 1,
         "timesteps_per_iteration": 10000,
-    }, env="BreakDeterministic-v4")
+    }, env="BreakoutDeterministic-v4")
 
     for i in range(num_steps):
         if i % 2000 == 0:
