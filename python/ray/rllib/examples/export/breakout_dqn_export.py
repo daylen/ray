@@ -10,6 +10,9 @@ import tensorflow as tf
 import numpy as np
 
 from ray.rllib.agents.registry import get_agent_class
+import signal
+import sys
+import time
 
 ray.init(num_cpus=4)
 
@@ -38,15 +41,34 @@ def train_and_export(algo_name, num_steps, model_dir, ckpt_dir, prefix):
         "prioritized_replay_alpha": 0.5,
         "beta_annealing_fraction": 1.0,
         "final_prioritized_replay_beta": 1.0,
-        "num_gpus": 1,
+        "num_gpus": 0.5,
         "timesteps_per_iteration": 10000,
     }, env="BreakoutDeterministic-v4")
 
+    def exit_gracefully(signum, frame):
+        # restore the original signal handler as otherwise evil things will happen
+        # in raw_input when CTRL+C is pressed, and our signal handler is not re-entrant
+        signal.signal(signal.SIGINT, original_sigint)
+
+        try:
+            if raw_input("\nReally quit? (y/n)> ").lower().startswith('y'):
+                alg.export_policy_checkpoint(ckpt_dir, filename_prefix=prefix + "_FINAL.ckpt")
+                sys.exit(1)
+
+        except KeyboardInterrupt:
+            print("Ok ok, quitting")
+            sys.exit(1)
+
+        # restore the exit gracefully handler here    
+        signal.signal(signal.SIGINT, exit_gracefully)
+
+    signal.signal(signal.SIGINT, exit_gracefully)
+
     for i in range(num_steps):
-        if i % 2000 == 0:
-            print('Training iter', i)
+        print('Training iter', i)
         alg.train()
-        if i % 10000 == 0:
+        # Checkpoint every 3 iterations
+        if i % 3 == 0:
             # Export tensorflow checkpoint for fine-tuning
             alg.export_policy_checkpoint(ckpt_dir, filename_prefix=prefix + "_" + str(i) + ".ckpt")
             # Export tensorflow SavedModel for online serving
