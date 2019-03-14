@@ -107,7 +107,7 @@ def restore_checkpoint_conv_only(export_dir, prefix):
 if __name__ == "__main__":
     algo = "DQN"
     model_dir = ""
-    ckpt_dir = "/results/ckpt_export_dir"
+    ckpt_dir = "/results/breakout/ckpt_export_dir"
     if not os.path.isdir(ckpt_dir):
         print("Oh no" + 5 / 0)
     prefix = "model"
