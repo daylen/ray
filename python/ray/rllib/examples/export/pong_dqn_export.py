@@ -13,8 +13,10 @@ from ray.rllib.agents.registry import get_agent_class
 
 ray.init(num_cpus=4)
 
-
-def train_and_export(algo_name, num_steps, model_dir, ckpt_dir, prefix):
+"""
+Train a model. Pass in a dictionary for the transfer_weights param to do transfer learning.
+"""
+def train_and_export(algo_name, num_steps, ckpt_dir, prefix, transfer_weights=None):
     cls = get_agent_class(algo_name)
     alg = cls(config={
         "double_q": True,
@@ -42,6 +44,11 @@ def train_and_export(algo_name, num_steps, model_dir, ckpt_dir, prefix):
         "timesteps_per_iteration": 10000,
     }, env="PongDeterministic-v4")
 
+    # Set transfer weights if we have them.
+    if transfer_weights is not None:
+        print('Setting transfer weights for keys:', transfer_weights.keys());
+        alg.get_policy().set_weights_dict(transfer_weights)
+
     for i in range(num_steps):
         if i % 2000 == 0:
             print('Training iter', i)
@@ -49,41 +56,12 @@ def train_and_export(algo_name, num_steps, model_dir, ckpt_dir, prefix):
         if i % 10000 == 0:
             # Export tensorflow checkpoint for fine-tuning
             alg.export_policy_checkpoint(ckpt_dir, filename_prefix=prefix + "_" + str(i) + ".ckpt")
-            # Export tensorflow SavedModel for online serving
-            # alg.export_policy_model(model_dir)
     alg.export_policy_checkpoint(ckpt_dir, filename_prefix=prefix + "_FINAL.ckpt")
 
-
-def restore_saved_model(export_dir):
-    signature_key = \
-        tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY
-    g = tf.Graph()
-    with g.as_default():
-        with tf.Session(graph=g) as sess:
-            meta_graph_def = \
-                tf.saved_model.load(sess,
-                                    [tf.saved_model.tag_constants.SERVING],
-                                    export_dir)
-            print("Model restored!")
-            print("Signature Def Information:")
-            print(meta_graph_def.signature_def[signature_key])
-            print("You can inspect the model using TensorFlow SavedModel CLI.")
-            print("https://www.tensorflow.org/guide/saved_model")
-
-
-def restore_checkpoint(export_dir, prefix):
-    sess = tf.Session()
-    meta_file = "%s.meta" % prefix
-    saver = tf.train.import_meta_graph(os.path.join(export_dir, meta_file))
-    saver.restore(sess, os.path.join(export_dir, prefix))
-    print("Checkpoint restored!")
-    print("Variables Information:")
-    for v in tf.trainable_variables():
-        #value = sess.run(v)
-        #print(v.name, value)
-        print(v.name)
-
-def restore_checkpoint_conv_only(export_dir, prefix):
+"""
+Return dictionary mapping var names to weights.
+"""
+def read_checkpoint_conv_only(export_dir, prefix):
     sess = tf.Session()
     meta_file = "%s.meta" % prefix
     saver = tf.train.import_meta_graph(os.path.join(export_dir, meta_file))
@@ -93,25 +71,33 @@ def restore_checkpoint_conv_only(export_dir, prefix):
     init = tf.global_variables_initializer()
     sess.run(init)
 
-    vars_to_restore = [v for v in tf.trainable_variables() if "conv" in v.name]
-    print(vars_to_restore)
+    # Type: array of tensorflow vars
+    tf_vars_to_restore = [v for v in tf.trainable_variables() if "conv" in v.name]
+    # Type: array of strings
+    var_names_to_restore = [v.name for v in tf_vars_to_restore]
 
-    # new saver
-    saver = tf.train.Saver(vars_to_restore)
+    # Overwrite saver
+    saver = tf.train.Saver(tf_vars_to_restore)
     saver.restore(sess, os.path.join(export_dir, prefix))
+    weights_dict = {}
     for v in tf.trainable_variables():
         value = sess.run(v)
         print(v.name, np.mean(value))
+        if v.name in var_names_to_restore:
+            # We need to chop off the :0 part of the var name
+            weights_dict[v.name.replace(':0', '')] = value
+    return weights_dict
 
 
 if __name__ == "__main__":
     algo = "DQN"
-    model_dir = ""
-    ckpt_dir = "/results/ckpt_export_dir"
+    ckpt_dir = "/tmp/ckpt_export_dir"
     if not os.path.isdir(ckpt_dir):
-        print("Oh no" + 5 / 0)
-    prefix = "model"
-    num_steps = 5000000
-    train_and_export(algo, num_steps, model_dir, ckpt_dir, prefix)
-    # restore_saved_model(model_dir)
-    # restore_checkpoint_conv_only(ckpt_dir, prefix)
+        print("Directory does not exist!" + 5 / 0)
+    num_steps = 1
+    # print('BEGIN TRAIN ONE STEP')
+    # train_and_export(algo, num_steps, ckpt_dir, "model")
+    print('BEGIN LOAD VARS')
+    weights = read_checkpoint_conv_only(ckpt_dir, "model_FINAL.ckpt")
+    print('BEGIN RETRAIN')
+    train_and_export(algo, 0, ckpt_dir, "transfer_model", weights)

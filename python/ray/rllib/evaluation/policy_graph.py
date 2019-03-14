@@ -215,6 +215,10 @@ class PolicyGraph(object):
         raise NotImplementedError
 
     @DeveloperAPI
+    def set_weights_dict(self, weights):
+        raise NotImplementedError
+
+    @DeveloperAPI
     def get_initial_state(self):
         """Returns initial RNN state for the current policy."""
         return []

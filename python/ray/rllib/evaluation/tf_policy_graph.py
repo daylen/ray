@@ -208,6 +208,10 @@ class TFPolicyGraph(PolicyGraph):
         return self._variables.set_flat(weights)
 
     @override(PolicyGraph)
+    def set_weights_dict(self, weights):
+        return self._variables.set_weights(weights)
+
+    @override(PolicyGraph)
     def export_model(self, export_dir):
         """Export tensorflow graph to export_dir for serving."""
         with self._sess.graph.as_default():
