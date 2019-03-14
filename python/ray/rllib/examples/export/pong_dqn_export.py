@@ -50,12 +50,10 @@ def train_and_export(algo_name, num_steps, ckpt_dir, prefix, transfer_weights=No
         alg.get_policy().set_weights_dict(transfer_weights)
 
     for i in range(num_steps):
-        if i % 2000 == 0:
-            print('Training iter', i)
+        print('Training iter', i)
         alg.train()
-        if i % 10000 == 0:
-            # Export tensorflow checkpoint for fine-tuning
-            alg.export_policy_checkpoint(ckpt_dir, filename_prefix=prefix + "_" + str(i) + ".ckpt")
+        # Export tensorflow checkpoint for fine-tuning
+        alg.export_policy_checkpoint(ckpt_dir, filename_prefix=prefix + "_" + str(i) + ".ckpt")
     alg.export_policy_checkpoint(ckpt_dir, filename_prefix=prefix + "_FINAL.ckpt")
 
 """
