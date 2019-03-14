@@ -46,27 +46,6 @@ def train_and_export(algo_name, num_steps, model_dir, ckpt_dir, prefix):
     }, env="BreakoutDeterministic-v4")
 
 
-    original_sigint = signal.getsignal(signal.SIGINT)
-    def exit_gracefully(signum, frame):
-        # restore the original signal handler as otherwise evil things will happen
-        # in raw_input when CTRL+C is pressed, and our signal handler is not re-entrant
-        signal.signal(signal.SIGINT, original_sigint)
-
-        try:
-            if raw_input("\nReally quit? (y/n)> ").lower().startswith('y'):
-                alg.export_policy_checkpoint(ckpt_dir, filename_prefix=prefix + "_FINAL.ckpt")
-                sys.exit(1)
-
-        except KeyboardInterrupt:
-            print("Ok ok, quitting")
-            alg.export_policy_checkpoint(ckpt_dir, filename_prefix=prefix + "_FINAL.ckpt")
-            sys.exit(1)
-
-        # restore the exit gracefully handler here    
-        signal.signal(signal.SIGINT, exit_gracefully)
-
-    signal.signal(signal.SIGINT, exit_gracefully)
-
     for i in range(num_steps):
         print('Training iter', i)
         alg.train()
