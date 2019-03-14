@@ -45,6 +45,8 @@ def train_and_export(algo_name, num_steps, model_dir, ckpt_dir, prefix):
         "timesteps_per_iteration": 10000,
     }, env="BreakoutDeterministic-v4")
 
+
+    original_sigint = signal.getsignal(signal.SIGINT)
     def exit_gracefully(signum, frame):
         # restore the original signal handler as otherwise evil things will happen
         # in raw_input when CTRL+C is pressed, and our signal handler is not re-entrant
