@@ -57,6 +57,7 @@ def train_and_export(algo_name, num_steps, model_dir, ckpt_dir, prefix):
 
         except KeyboardInterrupt:
             print("Ok ok, quitting")
+            alg.export_policy_checkpoint(ckpt_dir, filename_prefix=prefix + "_FINAL.ckpt")
             sys.exit(1)
 
         # restore the exit gracefully handler here    
