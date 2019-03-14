@@ -96,6 +96,7 @@ cc_test(
 cc_test(
     name = "logging_test",
     srcs = ["src/ray/util/logging_test.cc"],
+    args = ["--gtest_filter=PrintLogTest*"],
     copts = COPTS,
     deps = [
         ":ray_util",
@@ -500,9 +501,12 @@ filegroup(
         "python/ray/core/generated/__init__.py",
         "python/ray/core/generated/ray/__init__.py",
         "python/ray/core/generated/ray/protocol/__init__.py",
+        "python/ray/dashboard/dashboard.py",
+        "python/ray/dashboard/index.html",
+        "python/ray/dashboard/res/main.css",
+        "python/ray/dashboard/res/main.js",
         "python/ray/experimental/*.py",
         "python/ray/internal/*.py",
-        "python/ray/WebUI.ipynb",
         "python/ray/workers/default_worker.py",
     ]),
 )
