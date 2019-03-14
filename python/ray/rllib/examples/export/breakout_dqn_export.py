@@ -111,7 +111,7 @@ if __name__ == "__main__":
     if not os.path.isdir(ckpt_dir):
         print("Oh no" + 5 / 0)
     prefix = "model"
-    num_steps = 5000000
+    num_steps = 50000000000
     train_and_export(algo, num_steps, model_dir, ckpt_dir, prefix)
     # restore_saved_model(model_dir)
     # restore_checkpoint_conv_only(ckpt_dir, prefix)
