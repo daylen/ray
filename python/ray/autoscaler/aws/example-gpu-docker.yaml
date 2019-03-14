@@ -1,5 +1,5 @@
 # An unique identifier for the head node and workers of this cluster.
-cluster_name: gpu-docker
+cluster_name: gpu
 
 # The minimum number of workers nodes to launch in addition to the head
 # node. This number should be >= 0.
@@ -17,11 +17,11 @@ initial_workers: 0
 # This executes all commands on all nodes in the docker container,
 # and opens all the necessary ports to support the Ray cluster.
 # Empty string means disabled.
-docker:
-    image: "tensorflow/tensorflow:1.12.0-gpu-py3"
-    container_name: "ray-nvidia-docker-test" # e.g. ray_docker
-    run_options:
-      - --runtime=nvidia
+# docker:
+#     image: "tensorflow/tensorflow:1.12.0-gpu-py3"
+#     container_name: "ray-nvidia-docker-test" # e.g. ray_docker
+#     run_options:
+#       - --runtime=nvidia
 
 # The autoscaler will scale up the cluster to this target fraction of resource
 # usage. For example, if a cluster of 10 nodes is 100% busy and
@@ -71,7 +71,7 @@ head_node:
 # For more documentation on available fields, see:
 # http://boto3.readthedocs.io/en/latest/reference/services/ec2.html#EC2.ServiceResource.create_instances
 worker_nodes:
-    InstanceType: m5.large
+    InstanceType: m4.16xlarge
     ImageId: ami-0b294f219d14e6a82 # Deep Learning AMI (Ubuntu) Version 21.0
 
     # Run workers on spot by default. Comment this out to use on-demand.
@@ -92,9 +92,9 @@ file_mounts: {
 
 # List of shell commands to run to set up nodes.
 setup_commands:
-    # - pip install -U https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-0.7.0.dev0-cp27-cp27mu-manylinux1_x86_64.whl
-    - pip install -U https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-0.7.0.dev0-cp35-cp35m-manylinux1_x86_64.whl
-    # - pip install -U https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-0.7.0.dev0-cp36-cp36m-manylinux1_x86_64.whl
+    - echo "source activate tensorflow_p36;" >> ~/.bashrc
+    - pip install -U https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-0.7.0.dev0-cp36-cp36m-manylinux1_x86_64.whl
+    - pip install -U ray[rllib]
 
 # Custom commands that will be run on the head node after common setup.
 head_setup_commands:
