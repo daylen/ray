@@ -103,4 +103,4 @@ if __name__ == "__main__":
     print('BEGIN LOAD VARS')
     weights = read_checkpoint_conv_only(ckpt_dir, "model_186.ckpt")
     print('BEGIN RETRAIN')
-    train_and_export(algo, 1000000, ckpt_dir, "transfer_model", weights)
+    train_and_export(algo, 1000000, output_ckpt_dir, "transfer_model", weights)
