@@ -24,10 +24,10 @@ def train_and_export(algo_name, num_steps, ckpt_dir, prefix, transfer_weights=No
         "num_workers": 128,
         "num_envs_per_worker": 5,
         "clip_rewards": True,
-        # "lr_schedule": [
-        #     [0, 0.0005],
-        #     [20000000, 0.000000000001],
-        # ],
+        "lr_schedule": [
+            [0, 0.0005],
+            [20000000, 0.000000000001],
+        ],
     }, env="BreakoutNoFrameskip-v4")
 
     # Set transfer weights if we have them.
