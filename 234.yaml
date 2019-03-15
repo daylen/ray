@@ -1,5 +1,5 @@
 # An unique identifier for the head node and workers of this cluster.
-cluster_name: gpu
+cluster_name: impala
 
 # The minimum number of workers nodes to launch in addition to the head
 # node. This number should be >= 0.
@@ -7,7 +7,7 @@ min_workers: 0
 
 # The maximum number of workers nodes to launch in addition to the head
 # node. This takes precedence over min_workers.
-max_workers: 2
+max_workers: 3
 
 # The initial number of worker nodes to launch in addition to the head
 # node. When the cluster is first brought up (or when it is refreshed with a
@@ -55,7 +55,7 @@ auth:
 # For more documentation on available fields, see:
 # http://boto3.readthedocs.io/en/latest/reference/services/ec2.html#EC2.ServiceResource.create_instances
 head_node:
-    InstanceType: p2.xlarge
+    InstanceType: p3.8xlarge
     ImageId: ami-0b294f219d14e6a82 # Deep Learning AMI (Ubuntu) Version 21.0
 
     # You can provision additional disk space with a conf as follows
@@ -92,8 +92,9 @@ file_mounts: {
 
 # List of shell commands to run to set up nodes.
 setup_commands:
-    - echo "source activate tensorflow_p36;" >> ~/.bashrc
-    - pip install -U https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-0.7.0.dev0-cp36-cp36m-manylinux1_x86_64.whl
+    - echo 'export PATH="$HOME/anaconda3/envs/tensorflow_p36/bin:$PATH"' >> ~/.bashrc
+    # - echo "source activate tensorflow_p36;" >> ~/.bashrc
+    - pip install -U https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-0.7.0.dev1-cp36-cp36m-manylinux1_x86_64.whl
     - pip install -U ray[rllib]
 
 # Custom commands that will be run on the head node after common setup.
