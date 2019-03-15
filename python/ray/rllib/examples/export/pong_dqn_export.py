@@ -90,7 +90,7 @@ def read_checkpoint_conv_only(export_dir, prefix):
 
 if __name__ == "__main__":
     algo = "DQN"
-    ckpt_dir = "/tmp/ckpt_export_dir"
+    ckpt_dir = "/results/ckpt_export_dir"
     if not os.path.isdir(ckpt_dir):
         print("Directory does not exist!" + 5 / 0)
     num_steps = 1
