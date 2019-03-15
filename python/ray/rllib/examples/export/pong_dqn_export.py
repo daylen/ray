@@ -53,7 +53,8 @@ def train_and_export(algo_name, num_steps, ckpt_dir, prefix, transfer_weights=No
         print('Training iter', i)
         alg.train()
         # Export tensorflow checkpoint for fine-tuning
-        alg.export_policy_checkpoint(ckpt_dir, filename_prefix=prefix + "_" + str(i) + ".ckpt")
+        if (i%3 == 0):
+            alg.export_policy_checkpoint(ckpt_dir, filename_prefix=prefix + "_" + str(i) + ".ckpt")
     alg.export_policy_checkpoint(ckpt_dir, filename_prefix=prefix + "_FINAL.ckpt")
 
 """
@@ -98,4 +99,4 @@ if __name__ == "__main__":
     print('BEGIN LOAD VARS')
     weights = read_checkpoint_conv_only(ckpt_dir, "model_FINAL.ckpt")
     print('BEGIN RETRAIN')
-    train_and_export(algo, 0, ckpt_dir, "transfer_model", weights)
+    train_and_export(algo, 1000000, ckpt_dir, "transfer_model", weights)
