@@ -208,6 +208,10 @@ class TFPolicyGraph(PolicyGraph):
         return self._variables.set_flat(weights)
 
     @override(PolicyGraph)
+    def get_weights_dict(self):
+        return self._variables.get_weights()
+
+    @override(PolicyGraph)
     def set_weights_dict(self, weights):
         return self._variables.set_weights(weights)
 

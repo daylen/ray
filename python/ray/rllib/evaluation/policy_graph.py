@@ -215,6 +215,10 @@ class PolicyGraph(object):
         raise NotImplementedError
 
     @DeveloperAPI
+    def get_weights_dict(self):
+        raise NotImplementedError
+
+    @DeveloperAPI
     def set_weights_dict(self, weights):
         raise NotImplementedError
 
