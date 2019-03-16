@@ -11,7 +11,7 @@ import numpy as np
 
 from ray.rllib.agents.registry import get_agent_class
 
-ray.init(redis_address="localhost:6379")
+ray.init(redis_address=ray.services.get_node_ip_address() + ":6379")
 
 """
 Train a model. Pass in a dictionary for the transfer_weights param to do transfer learning.
