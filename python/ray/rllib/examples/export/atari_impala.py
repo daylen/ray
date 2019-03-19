@@ -24,11 +24,7 @@ def train_and_export(algo_name, num_steps, ckpt_dir, prefix, transfer_weights=No
         "num_workers": 128,
         "num_envs_per_worker": 5,
         "clip_rewards": True,
-        "lr_schedule": [
-            [0, 0.0005],
-            [20000000, 0.000000000001],
-        ],
-    }, env="BreakoutNoFrameskip-v4")
+    }, env="PongNoFrameskip-v4")
 
     # Set transfer weights if we have them.
     if transfer_weights is not None:
@@ -75,7 +71,7 @@ def read_checkpoint_conv_only(export_dir, prefix):
 
 if __name__ == "__main__":
     algo = "IMPALA"
-    ckpt_dir = "/home/ubuntu/checkpoints/pong_impala/"
+    ckpt_dir = "/home/ubuntu/checkpoints/breakout_impala/"
     num_steps = 100000000
     # print('BEGIN TRAIN')
     # train_and_export(algo, num_steps, ckpt_dir, "model")
