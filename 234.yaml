@@ -62,7 +62,7 @@ head_node:
     BlockDeviceMappings:
         - DeviceName: /dev/sda1
           Ebs:
-              VolumeSize: 100
+              VolumeSize: 120
 
     # Additional options in the boto docs.
 
@@ -93,9 +93,9 @@ file_mounts: {
 # List of shell commands to run to set up nodes.
 setup_commands:
     - echo 'export PATH="$HOME/anaconda3/envs/tensorflow_p36/bin:$PATH"' >> ~/.bashrc
-    # - echo "source activate tensorflow_p36;" >> ~/.bashrc
     - pip install -U https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-0.7.0.dev1-cp36-cp36m-manylinux1_x86_64.whl
     - pip install -U ray[rllib]
+    - git clone https://github.com/daylen/ray && cd ray && git checkout pong && python3 python/ray/rllib/setup-rllib-dev.py --yes
 
 # Custom commands that will be run on the head node after common setup.
 head_setup_commands:
