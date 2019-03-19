@@ -75,11 +75,11 @@ def read_checkpoint_conv_only(export_dir, prefix):
 
 if __name__ == "__main__":
     algo = "IMPALA"
-    ckpt_dir = "/home/ubuntu/checkpoints/breakout_impala/"
+    ckpt_dir = "/home/ubuntu/checkpoints/pong_impala/"
     num_steps = 100000000
-    print('BEGIN TRAIN')
-    train_and_export(algo, num_steps, ckpt_dir, "model")
-    # print('BEGIN LOAD VARS')
-    # weights = read_checkpoint_conv_only(ckpt_dir, "model_FINAL.ckpt")
-    # print('BEGIN RETRAIN')
-    # train_and_export(algo, 0, ckpt_dir, "transfer_model", weights)
+    # print('BEGIN TRAIN')
+    # train_and_export(algo, num_steps, ckpt_dir, "model")
+    print('BEGIN LOAD VARS')
+    weights = read_checkpoint_conv_only(ckpt_dir, "model_FINAL.ckpt")
+    print('BEGIN RETRAIN')
+    train_and_export(algo, num_steps, ckpt_dir, "transfer_model", weights)
